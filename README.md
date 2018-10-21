@@ -20,8 +20,8 @@ Database config can be changed in [config/default.toml](./config/default.toml)
 
 Where
 
-*   _userX_ is either WildDuck user ID (24 byte hex), username or an email address. This uset must already exists (should have been created via [WildDuck API](https://api.wildduck.email/#api-Users-PostUser))
-*   _/maildir/pathX_ is the maildir folder for that user
+*   **userX** is either WildDuck user ID (24 byte hex), username or an email address. This user must already exist (should have been created via [WildDuck API](https://api.wildduck.email/#api-Users-PostUser))
+*   **/maildir/pathX** is the maildir folder for that user
 
 ## Example
 
@@ -61,6 +61,10 @@ info 1540106306104 Master Forked worker 66829
 ```
 
 Once import has finished there should be some log files in current directory. See _messagelog.txt_ to see which file from maildir was imported into which message in WildDuck message database:
+
+```
+[2018-10-21 07:18:33] 66818 ./import-maildir/fixtures/user1/cur/1505297735.M810083P6469V000000000000FC00I0000000000044B99_3.ubuntu,S=9:2,F created STORENEW 5bcc2810bec32003b9e6bbc4/5bcc284855ab6a050e1575d3
+```
 
 *   _STORENEW_ means that message was stored
 *   _STORESKIP_ means that a duplicate was found and message was not stored
