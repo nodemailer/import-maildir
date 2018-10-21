@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+
+/* eslint no-console: 0*/
+
+'use strict';
+
+const pathlib = require('path');
+
+process.env.NODE_CONFIG_DIR = pathlib.join(__dirname, '..', 'config');
+
+const argv = require('yargs').argv;
+const fs = require('fs');
+
+const paths = new Map();
+const users = new Map();
+
+const listing = [];
+
+argv._.forEach(arg => {
+    let parts = arg.split(':');
+    let user = parts.shift();
+    let path = parts.join(':');
+
+    try {
+        if (!user) {
+            throw new Error('User not set');
+        }
+
+        if (!path) {
+            throw new Error('Path not set');
+        }
+
+        path = pathlib.normalize(pathlib.resolve(process.cwd(), path));
+
+        let stats;
+        stats = fs.statSync(path);
+        if (!stats || !stats.isDirectory()) {
+            throw new Error('Not a directory');
+        }
+        try {
+            stats = fs.statSync(pathlib.join(path, 'cur'));
+            if (!stats || !stats.isDirectory()) {
+                throw new Error('Not maildir');
+            }
+        } catch (err) {
+            throw new Error('Not a maildir');
+        }
+    } catch (err) {
+        console.error('WARN: user=%s path=%s error=%s', user, path, err.message);
+        return;
+    }
+
+    let entry = {
+        user,
+        path
+    };
+
+    if (users.has(user)) {
+        console.error('ERR: user=%s path=%s error=Multiple rows for the same user, previously %s', user, path, users.get(user).path);
+        return process.exit(1);
+    }
+    users.set(user, entry);
+
+    if (paths.has(path)) {
+        console.error('ERR: user=%s path=%s error=Multiple rows for the same path, previously %s', user, path, paths.get(path).user);
+        return process.exit(1);
+    }
+    paths.set(path, entry);
+
+    listing.push(entry);
+});
+
+if (!listing.length) {
+    console.error('ERR: error=No valid users to process');
+    return process.exit(1);
+}
+
+console.log('Processing %s users', listing.length);
+
+require('../lib/importer.js').start(argv.uploaders, listing, argv);

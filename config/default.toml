@@ -1,0 +1,41 @@
+[dbs]
+    # mongodb connection string for the main database where message info is stored
+    mongo="mongodb://127.0.0.1:27017/wildduck"
+
+    # database name for attachments if different from messages db
+    #gridfs="attachments"
+
+    # database name for users if different from messages db
+    #users="users"
+
+    # Redis connection string
+    redis="redis://127.0.0.1:6379/3"
+
+[general]
+    # How many worker processes to run.
+    # Only makes sense to increase if you import several users in one go as single user
+    # is always processed by a single worker to maintain message ordering.
+    uploaders=1
+
+[log]
+    # log level for the master process about stuff that is printed to console
+    # does not effect logs stored to log files
+    level="silly"
+    # probably not even needed, keep as is
+    authlogExpireDays=30
+    [log.files]
+        # Import log output
+        # Existing log files are not removed, new lines are appended
+        messagelog="./messagelog.txt" # a resolution for every found message is written to this log file in a separate line
+        userlog="./userlog.txt"
+        errorlog="./errorlog.txt"
+
+[attachments]
+    # In most cases, keep this block as is
+    # For now there's only a single option for attachment storage.
+    type="gridstore"
+    bucket="attachments"
+
+    # If true then decodes base64 encoded attachments to binary before storing to DB.
+    # Decoding base64 attachments expects consistent line length and default base64 alphabet
+    decodeBase64=true
