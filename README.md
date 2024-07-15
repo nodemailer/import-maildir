@@ -15,7 +15,7 @@ Database config can be changed in [config/default.toml](./config/default.toml)
 ## Run
 
 ```bash
-./bin/import-maildir user1:/maildri/path1 user2:/maildri/path2 userN:/maildri/pathN
+./bin/import-maildir user1:/maildir/path1 user2:/maildir/path2 userN:/maildir/pathN
 ```
 
 Where
